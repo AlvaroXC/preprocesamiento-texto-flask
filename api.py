@@ -5,6 +5,7 @@ import nltk
 from nltk.tokenize import word_tokenize, sent_tokenize, RegexpTokenizer
 from nltk.corpus import stopwords  
 import spacy
+from flask_cors import CORS
 
 nltk.download('punkt')  # Descarga el paquete necesario para tokenización
 nltk.download('punkt_tab')
@@ -14,16 +15,16 @@ nltk.download('stopwords')
 nlp = spacy.load("es_core_news_sm")
 
 app = Flask(__name__)
+CORS(app, origins=["http://127.0.0.1:5500"])
 
 @app.route('/')
 def home():
     return "<h1>Hello world</h1>"
 
-@app.route('/api/preprocess-text', methods=['GET'])
+@app.route('/api/preprocess-text', methods=['POST'])
 def preprocess_text():
-    # data_json = request.get_json()
-    # text = data_json['text']
-    text = "Los gatos están corriendo rápidamente. Ellos han jugado con juguetes en el jardín."
+    data_json = request.get_json()
+    text = data_json['text']
 
     # detectar lenguaje 
     deteced_language = detect_language(text)
