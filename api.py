@@ -3,10 +3,11 @@ from collections import Counter
 import Levenshtein
 import nltk
 from nltk.tokenize import word_tokenize, sent_tokenize, RegexpTokenizer
+from nltk.corpus import stopwords  
 
 nltk.download('punkt')  # Descarga el paquete necesario para tokenización
 nltk.download('punkt_tab')
-
+nltk.download('stopwords')
 
 app = Flask(__name__)
 
@@ -14,27 +15,41 @@ app = Flask(__name__)
 def home():
     return "<h1>Hello world</h1>"
 
-@app.route('/api/preprocess-text', methods=['POST'])
+@app.route('/api/preprocess-text', methods=['GET'])
 def preprocess_text():
-    data_json = request.get_json()
-    text = data_json['text']
+    # data_json = request.get_json()
+    # text = data_json['text']
+    text = "Este es un ejemplo sencillo para demostrar la eliminación de stopwords"
+
+    # detectar lenguaje 
     deteced_language = detect_language(text)
+
+    #corregir texto
     corrected_text = correct_text(text, dictionary)
-    word_tokens =  word_tokenize(corrected_text)
-    sentence_tokens = sent_tokenize(corrected_text)
+
+    #tokens
+    word_tokens =  word_tokenize(text.lower())
+    # sentence_tokens = sent_tokenize(corrected_text)
 
     # Tokenización personalizada: Solo palabras (sin puntuación)
-    tokenizer = RegexpTokenizer(r'\w+')
-    custom_word_tokens = tokenizer.tokenize(text)
+    # tokenizer = RegexpTokenizer(r'\w+')
+    # custom_word_tokens = tokenizer.tokenize(text)
+
+    #eliminar stopwords 
+    stop_words = set(stopwords.words('spanish'))
+    # Eliminación de stopwords
+    filtered_tokens = [word for word in word_tokens if word not in stop_words]
+
 
     return jsonify({
         'language': deteced_language,
         'corrected text': corrected_text,
         'tokenización': {
             'Tokenizacion por palabras': word_tokens,
-            'Tokenización por oraciones': sentence_tokens,
-            'Tokenización personalizada': custom_word_tokens
-        }
+            # 'Tokenización por oraciones': sentence_tokens,
+            # 'Tokenización personalizada': custom_word_tokens
+        },
+        'Tokens después de eliminar stopswords' : filtered_tokens
     })
 
 
