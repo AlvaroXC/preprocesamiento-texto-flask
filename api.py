@@ -1,6 +1,11 @@
 from flask import Flask, request, jsonify
 from collections import Counter
 import Levenshtein
+import nltk
+from nltk.tokenize import word_tokenize, sent_tokenize, RegexpTokenizer
+
+nltk.download('punkt')  # Descarga el paquete necesario para tokenización
+nltk.download('punkt_tab')
 
 
 app = Flask(__name__)
@@ -15,10 +20,21 @@ def preprocess_text():
     text = data_json['text']
     deteced_language = detect_language(text)
     corrected_text = correct_text(text, dictionary)
+    word_tokens =  word_tokenize(corrected_text)
+    sentence_tokens = sent_tokenize(corrected_text)
+
+    # Tokenización personalizada: Solo palabras (sin puntuación)
+    tokenizer = RegexpTokenizer(r'\w+')
+    custom_word_tokens = tokenizer.tokenize(text)
 
     return jsonify({
         'language': deteced_language,
-        'corrected text': corrected_text
+        'corrected text': corrected_text,
+        'tokenización': {
+            'Tokenizacion por palabras': word_tokens,
+            'Tokenización por oraciones': sentence_tokens,
+            'Tokenización personalizada': custom_word_tokens
+        }
     })
 
 
