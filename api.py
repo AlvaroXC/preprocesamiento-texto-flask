@@ -4,10 +4,14 @@ import Levenshtein
 import nltk
 from nltk.tokenize import word_tokenize, sent_tokenize, RegexpTokenizer
 from nltk.corpus import stopwords  
+import spacy
 
 nltk.download('punkt')  # Descarga el paquete necesario para tokenización
 nltk.download('punkt_tab')
 nltk.download('stopwords')
+
+# Cargar el modelo en español
+nlp = spacy.load("es_core_news_sm")
 
 app = Flask(__name__)
 
@@ -19,7 +23,7 @@ def home():
 def preprocess_text():
     # data_json = request.get_json()
     # text = data_json['text']
-    text = "Este es un ejemplo sencillo para demostrar la eliminación de stopwords"
+    text = "Los gatos están corriendo rápidamente. Ellos han jugado con juguetes en el jardín."
 
     # detectar lenguaje 
     deteced_language = detect_language(text)
@@ -41,6 +45,12 @@ def preprocess_text():
     filtered_tokens = [word for word in word_tokens if word not in stop_words]
 
 
+    # Procesar el texto con spaCy
+    doc = nlp(text)
+
+    # Extraer los lemas de cada palabra
+    lemmatized_tokens = [token.lemma_ for token in doc]
+
     return jsonify({
         'language': deteced_language,
         'corrected text': corrected_text,
@@ -49,7 +59,8 @@ def preprocess_text():
             # 'Tokenización por oraciones': sentence_tokens,
             # 'Tokenización personalizada': custom_word_tokens
         },
-        'Tokens después de eliminar stopswords' : filtered_tokens
+        'Tokens después de eliminar stopswords' : filtered_tokens, 
+        'Lemas': lemmatized_tokens
     })
 
 
