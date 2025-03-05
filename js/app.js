@@ -18,7 +18,7 @@ function validarFormulario(){
         mostrarError('El campo de texto no puede ir vacio');
         return;
     }else{
-        consultarAPI(textAreaValue)
+        consultarAPI(textAreaValue.trim())
     }
 
 }
@@ -67,12 +67,73 @@ async function consultarAPI(text){
     }
 }
 
+function mostrarResultadoPreprocesamiento(data){
+    const {language, corrected_text, word_tokens, filtered_tokens, lemas} = data; 
+
+    const languagePrefix = {
+        fr: 'Frances', 
+        en: 'Inges', 
+        es: 'Español'
+    }
+
+    console.log(word_tokens)
+
+    const languagePElement = document.createElement('p');
+    languagePElement.classList.add('font-bold', 'text-2xl');
+    languagePElement.innerHTML = `Idioma: ${languagePrefix[language[0]]}`; 
+
+    const correctedTextPElement = document.createElement('p');
+    correctedTextPElement.classList.add('font-bold', 'text-2xl');
+    correctedTextPElement.innerText = `Texto corregido: ${corrected_text}`  
+    
+    //tokens de texto
+    let wordTokensText = '';
+    word_tokens.forEach(element => {
+        wordTokensText+= `${element}, `;
+    })
+    const wordTokensPElement = document.createElement('p');
+    wordTokensPElement.classList.add('font-bold', 'text-2xl');
+    wordTokensPElement.textContent = `Tokens de palabras: ${wordTokensText}`
+    
+    //sin stopwords
+    let filteredTokensText = '';
+    filtered_tokens.forEach(element => {
+        filteredTokensText += `${element}, `;
+    })
+    const filteredTokenPElement = document.createElement('p');
+    filteredTokenPElement.classList.add('font-bold', 'text-2xl');
+    filteredTokenPElement.textContent = `Sin stopwords: ${filteredTokensText}`
+    
+    //lemas
+    let lemasText = '';
+    lemas.forEach(element => {
+        lemasText+= `${element}, `;
+    })
+    const lemasPElement = document.createElement('p');
+    lemasPElement.classList.add('font-bold', 'text-2xl');
+    lemasPElement.textContent = `Lemas: ${lemasText}`
+    
+    const resultadoDiv = document.createElement('div');
+    resultadoDiv.classList.add('text-center', 'text-white'); 
+
+    resultadoDiv.appendChild(languagePElement);
+    resultadoDiv.appendChild(correctedTextPElement)
+    resultadoDiv.appendChild(wordTokensPElement)
+    resultadoDiv.appendChild(filteredTokenPElement)
+    resultadoDiv.appendChild(lemasPElement)
+
+    resultado.appendChild(resultadoDiv);
+
+}
+
 
 function limpiarHTML(){
     while(resultado.hasChildNodes()){
         resultado.removeChild(resultado.firstChild);
     }
 }
+
+
 
 function mostrarSpinner(){
 

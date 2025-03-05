@@ -54,14 +54,14 @@ def preprocess_text():
 
     return jsonify({
         'language': deteced_language,
-        'corrected text': corrected_text,
-        'tokenización': {
-            'Tokenizacion por palabras': word_tokens,
-            # 'Tokenización por oraciones': sentence_tokens,
-            # 'Tokenización personalizada': custom_word_tokens
-        },
-        'Tokens después de eliminar stopswords' : filtered_tokens, 
-        'Lemas': lemmatized_tokens
+        'corrected_text': corrected_text,
+        'word_tokens': word_tokens,
+        # 'tokenization': {
+        #     'sentence_token': sentence_tokens,
+        #     'custom_tokens': custom_word_tokens
+        # },
+        'filtered_tokens' : filtered_tokens, 
+        'lemas': lemmatized_tokens
     })
 
 
